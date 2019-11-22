@@ -29,6 +29,10 @@ class ICourseFactory(ABC):
     def __init__(self):
         pass
 
+    @abstractmethod
+    def info(self):
+        pass
+
 
 class ICourse(ICourseFactory):
 
@@ -37,6 +41,9 @@ class ICourse(ICourseFactory):
         self.teacher = teacher
         self.course_program = course_program
         self.type_course = type_course
+
+    def info(self):
+        return self.course_name, self.teacher, self.course_program, self.type_course
 
 
 class ILocalCourse(ICourse):
@@ -57,6 +64,9 @@ class ITeacher(ICourseFactory):
         self.teacher = teacher
         self.list_course = list_course
 
+    def info(self):
+        return self.teacher, self.list_course
+
 
 class CourseFactory:
 
@@ -73,19 +83,24 @@ class CourseFactory:
 
             type_course = question_choice("Який тип курсу потрібно створити?", ('Local Course', 'Offsite Course'))
 
-            course_name = str(input("Введіть назву курсу"))
-            teacher = str(input("Введіть викладача курсу"))
-            course_program = str(input("Введіть програму курсу")).split(", ")
+            course_name = str(input("Введіть назву курсу "))
+            teacher = str(input("Введіть викладача курсу "))
+            course_program = str(input("Введіть програму курсу (через кому) ")).split(",")
             if type_course == "Local Course":
-                ILocalCourse(course_name, teacher, course_program, type_course)
+                information = ILocalCourse(course_name, teacher, course_program, type_course)
 
             else:
-                IOffsiteCourse(course_name, teacher, course_program, type_course)
+                information = IOffsiteCourse(course_name, teacher, course_program, type_course)
 
         else:
-            teacher = str(input("Введіть викладача"))
+            teacher = str(input("Введіть викладача "))
             print("Введіть список предметів даного викладача (розділені через кому)")
             subgects = str(input()).split(", ")
-            ITeacher(teacher, subgects)
+            information = ITeacher(teacher, subgects)
 
+        self.information = information
+
+    def info(self):
+
+        return self.information.info()
 
